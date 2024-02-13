@@ -65,3 +65,18 @@ export interface UserType {
     nat: string;
   }
   
+  export interface BgImgStylesType {
+    transition: string;
+    borderRadius: string;
+    boxShadow: string;
+    position?: React.CSSProperties['position'];
+    backgroundColor: string;
+    color: string;
+    marginBottom: string;
+    backgroundSize: string;
+    backgroundRepeat: string;
+    backgroundPosition: string;
+    backgroundImage: string;
+    height?: string;
+    width?: string;
+  }

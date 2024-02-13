@@ -6,6 +6,9 @@ interface UsersPaginationProps {
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
 }
+const pagesCount = process.env.REACT_APP_PAGES
+  ? parseInt(process.env.REACT_APP_PAGES, 10)
+  : 1;
 
 export default function UsersPagination({
   page,
@@ -18,7 +21,11 @@ export default function UsersPagination({
 
   return (
     <Stack spacing={2} sx={{ my: 4 }}>
-      <Pagination count={10} page={page} onChange={handleChange} />
+      <Pagination
+        count={pagesCount || 10}
+        page={page}
+        onChange={handleChange}
+      />
     </Stack>
   );
 }

@@ -7,7 +7,6 @@ import { UserType } from "../types";
 import Header from "../components/users/Header";
 import CustomSkeleton from "../components/users/Skeleton";
 
-const TOTAL_USERS = 6;
 const Users = () => {
   const [users, setUsers] = useState<UserType[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserType[]>([]);
@@ -16,67 +15,71 @@ const Users = () => {
   const [gender, setGender] = useState(defaultGender);
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
-  const getUsers = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/?page=${page}&results=${TOTAL_USERS}&gender=${gender}`
-      );
-      setUsers(res?.data?.results);
-    } catch (error) {
-      console.log("error :>> ", error);
-    }
-    setLoading(false);
-  };
 
   useEffect(() => {
+    const getUsers = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/?page=${page}&results=${
+            process.env.REACT_APP_USERS_AT_A_TIME || 6
+          }&gender=${gender}`
+        );
+        setUsers(res?.data?.results);
+      } catch (error) {
+        console.log("error :>> ", error);
+      }
+      setLoading(false);
+    };
     getUsers();
   }, [page, gender]);
 
   return (
-    <div className="mt-4">
-      <div className="w-full my-4">
-        <Header
-          setGender={setGender}
-          gender={gender}
-          users={users}
-          setFilteredUsers={setFilteredUsers}
-          setKeyword={setKeyword}
-          keyword={keyword}
-        />
+    <>
+      <div className="mt-4 px-1 md:px-2">
+        <div className="w-full my-4">
+          <Header
+            setGender={setGender}
+            gender={gender}
+            users={users}
+            setFilteredUsers={setFilteredUsers}
+            setKeyword={setKeyword}
+            keyword={keyword}
+          />
+        </div>
+        {!loading ? (
+          <>
+            {(keyword.length > 0 ? filteredUsers : users)?.length > 0 ? (
+              <>
+                <Grid
+                  container
+                  spacing={2}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  {(keyword.length > 0 ? filteredUsers : users)?.map(
+                    (user: UserType) => (
+                      <Fragment key={user?.login?.uuid}>
+                        <User user={user} />
+                      </Fragment>
+                    )
+                  )}
+                </Grid>
+                <div className="flex justify-center">
+                  <UsersPagination page={page} setPage={setPage} />
+                </div>
+              </>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No Record Found!
+              </Typography>
+            )}
+          </>
+        ) : (
+          <CustomSkeleton />
+        )}
       </div>
-      {!loading ? (
-        <>
-          {(keyword.length > 0 ? filteredUsers : users)?.length > 0 ? (
-            <>
-              <Grid
-                container
-                spacing={2}
-                justifyContent="center"
-                alignItems="center"
-              >
-                {(keyword.length > 0 ? filteredUsers : users)?.map(
-                  (user: UserType) => (
-                    <Fragment key={user?.login?.uuid}>
-                      <User user={user} />
-                    </Fragment>
-                  )
-                )}
-              </Grid>
-              <div className="flex justify-center">
-                <UsersPagination page={page} setPage={setPage} />
-              </div>
-            </>
-          ) : (
-            <Typography variant="body2" color="text.secondary">
-              No Record Found!
-            </Typography>
-          )}
-        </>
-      ) : (
-        <CustomSkeleton />
-      )}
-    </div>
+    </>
   );
 };
 

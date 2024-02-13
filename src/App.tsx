@@ -1,26 +1,39 @@
 import "./App.css";
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Users from "./pages/Users";
 import User from "./pages/User";
+import Blogs from "./pages/Blogs";
+import Layout from "./Layout";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Navigate to="/users" replace /> },
+  {
+    path: "/",
+    element: (
+      <Layout>
+        <Blogs />
+      </Layout>
+    ),
+  },
   {
     path: "users",
-    element: <Users />,
+    element: (
+      <Layout>
+        <Users />
+      </Layout>
+    ),
   },
   {
     path: "users/:id",
-    element: <User />,
+    element: (
+      <Layout>
+        <User />
+      </Layout>
+    ),
   },
 ]);
 function App() {
   return (
-    <div className="px-1 md:px-2">
+    <div>
       <RouterProvider router={router} />
     </div>
   );
